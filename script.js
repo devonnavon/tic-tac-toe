@@ -4,7 +4,36 @@ const GameBoard = (function() {
         [null, null, null],
         [null, null, null]
     ]
-    return {gameBoard}
+
+    function updateBoard(x_y, value){
+        x_ylist = x_y.split('_');
+        x = x_ylist[0];
+        y = x_ylist[1];
+        gameBoard[y-1][x-1] = value
+        return checkGame();
+    }
+
+    function getValue(x_y){
+        x_ylist = x_y.split('_');
+        x = x_ylist[0];
+        y = x_ylist[1];
+       return gameBoard[y-1][x-1]
+    }
+
+    function checkGame(){
+        if ((gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2] && gameBoard[1][1] !==null) || 
+        (gameBoard[2][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[0][2] && gameBoard[1][1] !==null)) return gameBoard[1][1]; //diagonal
+        for (let i = 0; i < 3; i++){
+            if(gameBoard[i].every(e=>(e===gameBoard[i][0] && e!==null))) return gameBoard[i][0]; //row
+            else if([gameBoard[0][i],gameBoard[1][i],gameBoard[2][i]].every(e=>(e===gameBoard[0][i] && e!==null))) return gameBoard[0][i]; //column
+        }
+        for (i = 0; i < 3; i++){
+            for (let j = 0; j <= 2; j++){if (gameBoard[i][j] ===null) return null}
+        }
+        return 'tie'
+    }
+
+    return {gameBoard, updateBoard, getValue}
 })();
 
 const DisplayController = (function() {
@@ -12,45 +41,52 @@ const DisplayController = (function() {
     const board = document.getElementById('board')
 
     function playClick(e,playerX,playerO){
-        let currentPlayer = playerX.turn ? playerX : playerO;
-        let nextPlayer = !playerX.turn ? playerX : playerO;
-        console.log(currentPlayer.turn)
-        console.log(nextPlayer.turn)
+        if(GameBoard.getValue(e.target.id) === null){
+            let currentPlayer = playerX.turn ? playerX : playerO;
+            let nextPlayer = !playerX.turn ? playerX : playerO;
+            currentPlayer.turn = false;
+            nextPlayer.turn = true;
+            updatePlayArea(e.target, currentPlayer.value);
+            let gameStatus = GameBoard.updateBoard(e.target.id, currentPlayer.value);
+            declareResult(gameStatus)
+        }
 
-        currentPlayer.turn = false
-        nextPlayer.turn = true
-        console.log('switch')
-        
-        console.log(currentPlayer.turn)
-        console.log(nextPlayer.turn)
+    }
 
-
-        updatePlayArea(e.target, currentPlayer.value)
+    function declareResult(gameStatus){
+        if(gameStatus=='tie'){
+            console.log('they tied')
+            //display reset button
+        }
+        else if(gameStatus){
+            console.log(`${gameStatus} won!!`)
+            //display reset button 
+        }
     }
 
     function addElement(x,y){
         const playArea = document.createElement('div')
         playArea.classList.add('play')
         playArea.setAttribute('id', `${x}_${y}`)
-        playArea.addEventListener('click', e=>{playClick(e,playerX,playerO)})
+        playArea.addEventListener('click', e=>{playClick(e,playerX,playerO, )})
         board.appendChild(playArea)
     }
 
     function updatePlayArea(playArea, value){
-        playArea.innerHTML = value
+        if(value==='X') playArea.classList.add('playerOne')
+        if(value==='O') playArea.classList.add('playerTwo')
     }
-
 
 
     function getPlayArea(x,y){
         return document.getElementById(`${x}_${y}`)
     }
 
-    function setBoard(gameBoard, playerX, playerO){
+    function setBoard(){
         let x=1,y=1;
-        gameBoard.forEach(row => {
+        GameBoard.gameBoard.forEach(row => {
             row.forEach(e=>{
-                if (getPlayArea(x,y) === null) addElement(x,y, playerX, playerO);
+                if (getPlayArea(x,y) === null) addElement(x,y);
                 else console.log('exists');
                 x++
             })
@@ -75,16 +111,7 @@ const DisplayController = (function() {
 const Player = (name, value) => {
     let turn = value==='X' ? true : false;
     
-    function go(){
-        turn = false
-        return turn
-    }
-
-    function up(){
-        turn = true
-    }
-
-    return {name, value, turn, go, up}
+    return {name, value, turn}
 }  
 
 //global
@@ -92,4 +119,5 @@ const Player = (name, value) => {
 const playerX = Player('todd', 'X')
 const playerO = Player('jack', 'O')
 
-DisplayController.setBoard(GameBoard.gameBoard, playerX, playerO)
+
+DisplayController.setBoard()
