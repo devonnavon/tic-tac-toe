@@ -38,7 +38,8 @@ const GameBoard = (function() {
 
 const DisplayController = (function() {
     'use strict'
-    const board = document.getElementById('board')
+    const board = document.getElementById('board');
+    const results = document.getElementById('results');
 
     function playClick(e,playerX,playerO){
         if(GameBoard.getValue(e.target.id) === null){
@@ -48,20 +49,14 @@ const DisplayController = (function() {
             nextPlayer.turn = true;
             updatePlayArea(e.target, currentPlayer.value);
             let gameStatus = GameBoard.updateBoard(e.target.id, currentPlayer.value);
-            declareResult(gameStatus)
+            if(gameStatus) declareResult(gameStatus, currentPlayer);
         }
-
     }
 
-    function declareResult(gameStatus){
-        if(gameStatus=='tie'){
-            console.log('they tied')
-            //display reset button
-        }
-        else if(gameStatus){
-            console.log(`${gameStatus} won!!`)
-            //display reset button 
-        }
+    function declareResult(gameStatus, currentPlayer){
+        console.log('hellow')
+        if(gameStatus=='tie') console.log('Tie'), results.innerHTML='Tie Game!!';
+        else results.innerHTML=`${currentPlayer.name} won!!`, console.log('john');
     }
 
     function addElement(x,y){
@@ -73,8 +68,15 @@ const DisplayController = (function() {
     }
 
     function updatePlayArea(playArea, value){
-        if(value==='X') playArea.classList.add('playerOne')
-        if(value==='O') playArea.classList.add('playerTwo')
+        const playerMove = document.createElement('div')
+        if(value==='X') {
+            playerMove.classList.add('playerOne')
+            playArea.appendChild(playerMove)
+        }
+        if(value==='O') {
+            playerMove.classList.add('playerTwo')
+            playArea.appendChild(playerMove)
+        }
     }
 
 
@@ -95,29 +97,22 @@ const DisplayController = (function() {
         });
     }
 
-    // function setBoard(){
-    //     let x=0, y=1;
-    //     [...Array(9).keys()].forEach(n=>{
-    //         if(x%3==0 && x!=0) y++, x=1;
-    //         else x++;
-    //         addElement(x,y)
-    //     })
-    // }
-
     return {setBoard}
 
 })();
 
 const Player = (name, value) => {
     let turn = value==='X' ? true : false;
-    
-    return {name, value, turn}
+
+    return {value, turn, name}
 }  
 
 //global
 
-const playerX = Player('todd', 'X')
-const playerO = Player('jack', 'O')
+const playerX = Player('Player One','X')
 
+const playerO = Player('Player Two','O')
+
+console.log(playerX.name)
 
 DisplayController.setBoard()

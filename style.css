@@ -1,6 +1,6 @@
 #board {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
+    display: inline-grid;
+    grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto;
     width: 500px;
     height: 500px;
@@ -8,18 +8,20 @@
 }
 
 .play {
-    display: grid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 2px solid pink;
+    height: 160px;
+    width: 160px;
 }
 
 .playerOne {
-    display: grid;
-    justify-content: center;
-    align-content: center;
     position: relative;
-    width: 100px;
-    height: 90px;
+    height: 80px;
+    width: 96px;  
   }
+
   .playerOne:before,
   .playerOne:after {
     position: absolute;
@@ -28,7 +30,7 @@
     top: 0;
     width: 50px;
     height: 80px;
-    background: red;
+    background: black;
     border-radius: 50px 50px 0 0;
     transform: rotate(-45deg);
     transform-origin: 0 100%;
@@ -76,3 +78,27 @@
     box-sizing: content-box;
   }
 
+  #results {
+    position: relative;
+  }
+
+
+#reset{
+    display:inline-block;
+    padding:0.35em 1.2em;
+    border:0.1em solid #FFFFFF;
+    margin:0 0.3em 0.3em 0;
+    border-radius:0.12em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    color:#FFFFFF;
+    text-align:center;
+    transition: all 0.2s;
+    background-color: black;
+    }
+#reset:hover{
+    color:#000000;
+    background-color:#FFFFFF;
+    }
