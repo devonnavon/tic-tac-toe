@@ -33,15 +33,50 @@ const GameBoard = (function() {
         return 'tie'
     }
 
-    return {gameBoard, updateBoard, getValue}
+    function clearBoard(){
+        for (i = 0; i < 3; i++){
+            gameBoard[i] = gameBoard[i].map(e=>null)
+        }
+    }
+
+
+    return {gameBoard, updateBoard, getValue, clearBoard}
 })();
 
 const DisplayController = (function() {
     'use strict'
     const board = document.getElementById('board');
     const results = document.getElementById('results');
+    const gameOver = document.getElementById('game-over');
+    const reset = document.getElementById('reset');
 
-    function playClick(e,playerX,playerO){
+    
+    const playerForm = document.getElementById('playerForm')
+
+    reset.addEventListener('click', resetGame)
+    playerForm.addEventListener('submit', updateNames)
+
+    function updateNames(e){
+        e.preventDefault();
+        playerX.setName(document.getElementById('playerOneName').value)
+        playerO.setName(document.getElementById('playerTwoName').value)
+        console.log(e)
+    }
+
+    function resetGame(e) {
+        console.log('click');
+        GameBoard.clearBoard();
+        console.log(GameBoard.gameBoard)
+        setBoard()
+        gameOver.style.display = 'none';
+    }
+
+    function freezeBoard() {
+        board.querySelectorAll('*').forEach(n => n.removeEventListener('click', playClick));
+    }
+
+    function playClick(e){
+        if(e.target.id===''){return}
         if(GameBoard.getValue(e.target.id) === null){
             let currentPlayer = playerX.turn ? playerX : playerO;
             let nextPlayer = !playerX.turn ? playerX : playerO;
@@ -50,33 +85,35 @@ const DisplayController = (function() {
             updatePlayArea(e.target, currentPlayer.value);
             let gameStatus = GameBoard.updateBoard(e.target.id, currentPlayer.value);
             if(gameStatus) declareResult(gameStatus, currentPlayer);
-        }
+        } 
     }
 
     function declareResult(gameStatus, currentPlayer){
-        console.log('hellow')
-        if(gameStatus=='tie') console.log('Tie'), results.innerHTML='Tie Game!!';
-        else results.innerHTML=`${currentPlayer.name} won!!`, console.log('john');
+        gameOver.style.display = 'block';
+        if(gameStatus=='tie') results.innerHTML='Tie Game!!';
+        else results.innerHTML=`${currentPlayer.getName()} won!!`;
+        freezeBoard();
     }
 
     function addElement(x,y){
         const playArea = document.createElement('div')
         playArea.classList.add('play')
         playArea.setAttribute('id', `${x}_${y}`)
-        playArea.addEventListener('click', e=>{playClick(e,playerX,playerO, )})
+        playArea.addEventListener('click', playClick)
         board.appendChild(playArea)
     }
 
-    function updatePlayArea(playArea, value){
+    function updatePlayArea(playArea, value=null){
         const playerMove = document.createElement('div')
         if(value==='X') {
             playerMove.classList.add('playerOne')
             playArea.appendChild(playerMove)
         }
-        if(value==='O') {
+        else if(value==='O') {
             playerMove.classList.add('playerTwo')
             playArea.appendChild(playerMove)
         }
+        
     }
 
 
@@ -88,8 +125,8 @@ const DisplayController = (function() {
         let x=1,y=1;
         GameBoard.gameBoard.forEach(row => {
             row.forEach(e=>{
-                if (getPlayArea(x,y) === null) addElement(x,y);
-                else console.log('exists');
+                if (getPlayArea(x,y) !== null) getPlayArea(x,y).remove()
+                addElement(x,y);
                 x++
             })
             y++
@@ -101,18 +138,25 @@ const DisplayController = (function() {
 
 })();
 
-const Player = (name, value) => {
+const Player = (value) => {
     let turn = value==='X' ? true : false;
+    let name = 'Player'; 
 
-    return {value, turn, name}
+    const setName = nameString => {name = nameString;};
+    const getName = () => {return name;};
+    
+
+    return {
+        value, 
+        turn, 
+        setName,
+        getName  
+        }
 }  
 
 //global
-
-const playerX = Player('Player One','X')
-
-const playerO = Player('Player Two','O')
-
-console.log(playerX.name)
-
+const playerX = Player('X')
+playerX.setName('Player One')
+const playerO = Player('O')
+playerO.setName('Player Two')
 DisplayController.setBoard()

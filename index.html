@@ -7,12 +7,34 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
 </head>
 <body>
-    <div id = "game_title">Tic-Tac-Toe</div>
-    <div id="board">
+    <div id = "container">
+        <div id = "game_title">Tic-Tac-Toe</div>
+        <div id = "form_container">
+            <form id="playerForm">
+                <div id = "formTitle"> Pick your name! </div>
+                <ul>
+                    <li>
+                        <input type="text" name="playerOneName" id = "playerOneName" class="field-style field-split" value = 'Player One' placeholder="Player One" />
+                    
+                    </li>
+                    <li>
+                        <input type="text" name="playerTwoName" id = "playerTwoName" class="field-style field-split" value = 'Player Two' placeholder="Player Two" />
+                    </li>
+                    <br/>
+                    <li>
+                    <input class="button" type="submit" value="Submit" />
+                    </li>
+                    </ul>
+            </form>
+        </div>
+        <div id="board">
+        </div>
+        <!-- <div id="names"></div> -->
+        <div id="game-over">
+            <div id="results">Its a tie ahah</div>
+            <div id="reset">RESET</div>
+        </div>
     </div>
-    <!-- <div id="names"></div> -->
-    <div id="results"></div>
-    <div id="reset">RESET</div>
     <script type="text/javascript" src="script.js"></script>
 </body>
 </html>
