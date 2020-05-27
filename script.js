@@ -66,7 +66,6 @@ const DisplayController = (function() {
     function resetGame(e) {
         console.log('click');
         GameBoard.clearBoard();
-        console.log(GameBoard.gameBoard)
         setBoard()
         gameOver.style.display = 'none';
     }
